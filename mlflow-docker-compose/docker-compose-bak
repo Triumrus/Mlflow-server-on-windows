@@ -1,0 +1,145 @@
+version: '3.7'
+
+services:
+    traefik:
+        image: traefik:latest
+        container_name: traefik
+        command:
+          - "--providers.docker=true"
+          - "--entryPoints.e_mlflow.address=:5000"
+          - "--entryPoints.e_model1.address=:8001"
+ #         - "--entryPoints.e_model2.address=:8002"
+ #         - "--entryPoints.e_model3.address=:8003"
+          - "--api=true"
+          - "--api.insecure=true"
+          - "--api.dashboard=true"
+          - "--log.level=debug"
+          - "--log.format=json"
+          - "--log.filepath=/var/log/traefik.log"
+          - "--providers.docker.exposedByDefault=false" 
+        ports:
+          - "5000:5000"
+          - "8001:8001"
+          - "8002:8002"
+          - "8003:8003"
+          - "8080:8080"
+        volumes:
+          - "./logs:/var/log"
+          - "/var/run/docker.sock:/var/run/docker.sock"
+        restart: always
+        labels:
+          - "traefik.enable=true"
+
+    minio:
+        restart: always
+        image: minio/minio@sha256:d051d800a3025588f37f69f132bb5ef718547a9a4ee95ddee44e04ad952a0a96
+        container_name: mlflow_s3
+        ports:
+            - "9000:9000"
+            - "9001:9001"
+        command: server /data --console-address ':9001' --address ':9000'
+        environment:
+            - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
+            - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
+        volumes:
+            - minio_data:/data
+
+    mc:
+        image: minio/mc@sha256:4ccb0c7437bda19ed232603eab10cc246c8f9ac7ccd282943ebb7657a2df4820
+        depends_on:
+            - minio
+        container_name: mc
+        env_file:
+            - .env
+        entrypoint: >
+            /bin/sh -c "
+            /tmp/wait-for-it.sh minio:9000 &&
+            /usr/bin/mc alias set minio http://minio:9000 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} &&
+            /usr/bin/mc mb minio/mlflow;
+            exit 0;
+            "
+        volumes:
+            - ./wait-for-it.sh:/tmp/wait-for-it.sh
+
+    db:
+        restart: always
+        image: mysql/mysql-server@sha256:5b40d96b11333570143d98d3a74100fefadb9abb17b27a95dbc9ad33544ec142
+        container_name: mlflow_db
+        ports:
+            - "3306:3306"
+        environment:
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        volumes:
+            - dbdata:/var/lib/mysql
+
+    web:
+        restart: always
+        build: ./mlflow
+        image: mlflow_server
+        container_name: mlflow_server
+        depends_on:
+            - mc
+            - db
+        expose:
+          - "5000"
+        labels:
+          - "traefik.enable=true"
+          - "traefik.http.routers.r_mlflow.rule=ClientIP(`0.0.0.0/0`)"
+          - "traefik.http.routers.r_mlflow.entrypoints=e_mlflow"
+          - "traefik.http.routers.r_mlflow.service=s_mlflow"
+          - "traefik.http.services.s_mlflow.loadbalancer.server.port=5000"
+          - "traefik.http.routers.r_mlflow.middlewares=m_mlflow"
+          - "traefik.http.middlewares.m_mlflow.basicauth.users=admin:$$apr1$$sDWxwuc7$$VPWDFlOdNv82UoJoaIMaJ0"
+        environment:
+            - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+        command: mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root s3://mlflow/ --host 0.0.0.0
+
+    jupyter:
+        build:
+          context: .
+          dockerfile: ./docker/jupyter/Dockerfile
+        volumes:
+          - ./work:/home/jovyan/work
+          - ./credentials:/home/jovyan/.aws/credentials
+        ports:
+          - 8888:8888
+        expose:
+          - "8001"
+          - "8002"
+          - "8003"
+        command: "start-notebook.sh --NotebookApp.token="
+        environment:
+          - MLFLOW_TRACKING_URI=http://192.168.0.151:5000
+          - MLFLOW_S3_ENDPOINT_URL=http://192.168.0.151:9000
+        labels:
+          - "traefik.enable=true"
+
+          - "traefik.http.routers.r_model1.rule=ClientIP(`0.0.0.0/0`)"
+          - "traefik.http.routers.r_model1.entrypoints=e_model1"
+          - "traefik.http.routers.r_model1.service=s_model1"
+          - "traefik.http.services.s_model1.loadbalancer.server.port=8001"
+#          - "traefik.http.routers.r_model1.middlewares=m_model1"
+#          - "traefik.http.middlewares.m_model1.basicauth.users=admin:$$apr1$$LZsmJ/JP$$EqLAFmP31CWWYSctu62uV0"
+
+#          - "traefik.http.routers.r_model2.rule=ClientIP(`0.0.0.0/0`)"
+#          - "traefik.http.routers.r_model2.entrypoints=e_model2"
+#          - "traefik.http.routers.r_model2.service=s_model2"
+#          - "traefik.http.services.s_model2.loadbalancer.server.port=8002"
+#          - "traefik.http.routers.r_model2.middlewares=m_model2"
+#          - "traefik.http.middlewares.m_model2.basicauth.users=admin:$$apr1$$7oOZcAw2$$uuFE5DdfuFOYhkVtJN7yF1"
+
+#          - "traefik.http.routers.r_model3.rule=ClientIP(`0.0.0.0/0`)"
+#          - "traefik.http.routers.r_model3.entrypoints=e_model3"
+#          - "traefik.http.routers.r_model3.service=s_model3"
+#          - "traefik.http.services.s_model3.loadbalancer.server.port=8003"
+#          - "traefik.http.routers.r_model3.middlewares=m_model3"
+#          - "traefik.http.middlewares.m_model3.basicauth.users=admin:$$apr1$$62aULGPO$$XNqBvsWCj9mFQvhsVsnRF/"
+
+volumes:
+    dbdata:
+    minio_data:

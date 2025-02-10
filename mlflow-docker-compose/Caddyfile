@@ -1,0 +1,43 @@
+http://81.88.210.241:5000 {
+	basic_auth {
+		admin $2a$14$GzGKGNVfQVgA88svCJfzTeNq4nyd68XcFziLUL8a7yu9L0pd3mrdK
+	}
+	reverse_proxy mlflow_server:5000
+}
+
+http://81.88.210.241:8001 {
+	basic_auth {
+		admin $2a$14$Sxb9MNMFPo1/f14/749XMO9WDLdr2BNGivqhsr3w589vQ7hvEQaTO
+	}
+	reverse_proxy jupyter:8001
+}
+
+http://81.88.210.241:8002 {
+	basic_auth {
+		admin $2a$14$QN7CZ4aQ7Hpy9EKTImI/eetKvZPk6T.pP/31EvQmKJ8/E/IoTfFbS
+	}
+	reverse_proxy jupyter:8002
+}
+
+http://81.88.210.241:8003 {
+	basic_auth {
+		admin $2a$14$cEP3Lx3dcpmPw9fMQ9jrk.6.cyxAvVToqb3uHQzP89ksSS6LECAPW
+	}
+	reverse_proxy jupyter:8003
+}
+
+http://192.168.0.151:5000 {
+	reverse_proxy mlflow_server:5000
+}
+
+http://192.168.0.151:8001 {
+	reverse_proxy jupyter:8001
+}
+
+http://192.168.0.151:8002 {
+	reverse_proxy jupyter:8002
+}
+
+http://192.168.0.151:8003 {
+	reverse_proxy jupyter:8003
+}
