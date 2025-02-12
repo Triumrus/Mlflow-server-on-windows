@@ -6,7 +6,7 @@
 
 # Быстрый старт
 0. Купить Внешний (статистический) IP
-1. Устанавливаем Docker (https://www.docker.com/). Docker_v4.36.0.exe
+1. Устанавливаем Docker (https://www.docker.com/). (Current version: 4.36.0 (175267))
 2. Запускаем start-mlflow.bat (Ждем когда установит и скачает все программы)
 3. После выполнения и установок закрываем и еще раз запускаем start-mlflow.bat , где он уже запустит сервера
 
@@ -27,7 +27,8 @@ _Останавливаем серваки через_ **stop-mlflow.bat**
 Настроить переадресацию внешнего IP на ваш
 Он уже везде прописан
 Tp-link вот так
-![alt text](image.png)
+<img src="image.png" width="200" height="200">
+<!-- ![alt text](image.png) -->
 ![alt text](image-1.png)
 ![alt text](image-2.png)
 ## 
