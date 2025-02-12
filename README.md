@@ -27,6 +27,7 @@ _Останавливаем серваки через_ **stop-mlflow.bat**
 Настроить переадресацию внешнего IP на ваш.
 Он уже везде прописан.
 Tp-link вот так.
+
 <img src="image.png" width="200" height="200">
 <img src="image-1.png" width="200" height="200">
 <img src="image-2.png" width="200" height="200">
