@@ -24,13 +24,13 @@ _Останавливаем серваки через_ **stop-mlflow.bat**
 # Настройка
 ## Настройка IP
 В роуетре за ноутом/компом закрпить ip (192.168.0.151).
-Настроить переадресацию внешнего IP на ваш
-Он уже везде прописан
-Tp-link вот так
+Настроить переадресацию внешнего IP на ваш.
+Он уже везде прописан.
+Tp-link вот так.
 <img src="image.png" width="200" height="200">
-<!-- ![alt text](image.png) -->
-![alt text](image-1.png)
-![alt text](image-2.png)
+<img src="image-1.png" width="200" height="200">
+<img src="image-2.png" width="200" height="200">
+
 ## 
 docker-compose.yml
 
