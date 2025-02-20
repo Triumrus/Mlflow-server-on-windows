@@ -1,23 +1,23 @@
 # Mlflow-server-on-windows
 ## _ONE CLICK_
  
-Данная репоризиторий позволт устаноовить и запустить сервер MLflow на windows в один клик.
-Так же доступ MLFlow и Deploy к интеренете через внешний (Статический IP)
+Данная репозиторий позволит установить и запустить сервер MLflow на windows в один клик.  
+Доступ к MLflow и Deploy из сети интернета через внешний (Статический) IP.
 
 # Быстрый старт
-0. Купить Внешний (статистический) IP. (Опцианально)
-1. Присваеваем ПК ip-adress **192.168.0.151**
+0. Купить Внешний (статистический) IP. (Опционально)
+1. Закрепить за ПК ip-address **192.168.0.151** [Google](https://www.google.com/search?q=How+to+bind+IP+Address+and+MAC+Address&oq=How+to+bind+IP+Address+and+MAC+Address&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIICAEQABgWGB4yCAgCEAAYFhgeMgoIAxAAGIAEGKIEMgoIBBAAGIAEGKIEMgoIBRAAGIAEGKIEMgoIBhAAGIAEGKIEMgYIBxBFGD3SAQc3NDJqMGo0qAIAsAIA&sourceid=chrome&ie=UTF-8)
 2. Устанавливаем Docker (https://www.docker.com/). (Current version: 4.36.0 (175267))
 3. Запускаем **start-mlflow.bat** (Ждем когда установит и скачает все программы)
 4. После выполнения и установок закрываем и еще раз запускаем **start-mlflow.bat**, где он уже запустит сервера
 
 # Запуск и остановка серверов
-_Стартуем серваки через_ **start-mlflow.bat**  
-_Останавливаем серваки через_ **stop-mlflow.bat**
+_Запускаем сервер через_ **start-mlflow.bat**  
+_Останавливаем сервер через_ **stop-mlflow.bat**
 
 # URL
 - Jupiter - http://localhost:8888/  
-Все сохраяемые файлы и зименения хранятся в папке `work`
+Все сохранение и изменения хранятся в папке `work`
 - MLflow - http://192.168.0.151:5000/  
 - MINIO - http://localhost:9001/
 
@@ -45,34 +45,39 @@ MYSQL_ROOT_PASSWORD=mysql
 admin looChaekie9Eitow
 
 # jupyter
+# Порты для публикации моделей
+#Port Login Password 
 8001 admin Aiquoos5ahNgai8o
 8002 admin aZee2eeshuth7qua
 8003 admin Nai8shohj2ki6Cei
 ```
 
-# Настройка для доступа из Интернета
+# Настройка внешенго доступа (Интернет)
+Здесь мы расскажем как настроить доступ к API модели из сети
 ## Настройка IP роутера
-В роуетре за ноутом/компом закрпить ip (192.168.0.151)  
+В роутере за ноутом/компом закрепить ip (192.168.0.151)  
 Настроить переадресацию внешнего IP на ваш.  
 Заменить 81.88.208.255 на ваш.  
 Пример в роутере TP-Link.
 
-<img src="image.png" width="180" height="180"><img src="image-1.png" width="180" height="180"> <img src="image-2.png" width="180" height="180">
+<img src="multimedia/image.png" width="180" height="180"><img src="multimedia/image-1.png" width="180" height="180"> <img src="multimedia/image-2.png" width="180" height="180">
 
 ## Настройка Антивируса/Защиты
-- Добавить исключени в антивируса.  
+- Добавить исключении в антивируса.  
 Добавляем MLFlow и порт для каждой модели.  
-<img src="image-3.png" width="400" height="180">
+<img src="multimedia/image-3.png" width="400" height="180">
   
-- Брэдмаур  
-  `Брандмауэр защитника Windows` -> `Дополнительные парметры` -> `Правило для входящих подключений` -> `Создать правило` -> `Для порта` -> `Далее` -> `Протокол TCP` -> `Определенные локальные порты` -> Вписываем `5000,8001-8003,9000,9001` -> `Далее` -> `Далее` -> `Далее` -> Вписываем имя `mlflow` - `Готово`
+- Брандмауэр  
+  `Брандмауэр защитника Windows` -> `Дополнительные параметры` -> `Правило для входящих подключений` -> `Создать правило` -> `Для порта` -> `Далее` -> `Протокол TCP` -> `Определенные локальные порты` -> Вписываем `5000,8001-8003,9000,9001` -> `Далее` -> `Далее` -> `Далее` -> Вписываем имя `mlflow` - `Готово`
 
-<img src="image-4.png" width="500" height="230">
+<img src="multimedia/image-4.png" width="500" height="230">
 
 - Добавление дополнительных портов (модели/streamlit/другое)
-<img src="image-5.png" width="180" height="180">
+<img src="multimedia/image-5.png" width="180" height="180">
 
-# Добавление дополнительной моделей или других приложений (Python)
+# Добавление порта в сетевой доступ
+<span style="color:blue"> Добавим еще одну модель или приложение с сетевым доступом.  Для этого ее надо повесить на порт, например : **8004**  
+</span>  
 В `docker-compose.yml` в строке **11**  
 Добавляем нужные порты
 ```
@@ -137,6 +142,6 @@ http://81.88.210.241:8004 {
 }
 ```
 
-Так же этот порт в **Антивирус** и **Брэндмаур**
+Так же этот порт в **Антивирус** и **Брандмауэр**
 
 
