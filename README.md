@@ -1,15 +1,20 @@
 # Mlflow-server-on-windows
-## _ONE CLICK_
+## Описание
  
-Данная репозиторий позволит установить и запустить сервер MLflow на windows в один клик.  
-Доступ к MLflow и Deploy из сети интернета через внешний (Статический) IP.
+Данная репозиторий позволит:
+- Установить и запустить сервер [MLflow](https://mlflow.org/) на windows в одно нажатие.
+- Вести учет экпериментов в MLflow
+- Позволит публиковать модели с доступом в сеть интернет
+- На каждую модель выдавать (Логин / Пароль)
+- Jupiter который будет связан с MLflow
+
 
 # Быстрый старт
 0. Купить Внешний (статистический) IP. (Опционально)
 1. Закрепить за ПК ip-address **192.168.0.151** [Google](https://www.google.com/search?q=How+to+bind+IP+Address+and+MAC+Address&oq=How+to+bind+IP+Address+and+MAC+Address&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIICAEQABgWGB4yCAgCEAAYFhgeMgoIAxAAGIAEGKIEMgoIBBAAGIAEGKIEMgoIBRAAGIAEGKIEMgoIBhAAGIAEGKIEMgYIBxBFGD3SAQc3NDJqMGo0qAIAsAIA&sourceid=chrome&ie=UTF-8)
 2. Устанавливаем Docker (https://www.docker.com/). (Current version: 4.36.0 (175267))
-3. Запускаем **start-mlflow.bat** (Ждем когда установит и скачает все программы)
-4. После выполнения и установок закрываем и еще раз запускаем **start-mlflow.bat**, где он уже запустит сервера
+3. Запускаем mlflow-docker-compose\\**start-mlflow.bat** (Ждем когда установит и скачает все программы)
+4. После выполнения и установок закрываем и еще раз запускаем mlflow-docker-compose\\**start-mlflow.bat**, где он уже запустит сервера
 
 # Запуск и остановка серверов
 _Запускаем сервер через_ **start-mlflow.bat**  
