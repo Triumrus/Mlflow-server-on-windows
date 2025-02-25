@@ -5,7 +5,7 @@ docker info >nul 2>nul
 if %errorlevel% neq 0 (
     echo Start Docker...
     start "" "C:\Program Files\Docker\Docker\Docker Desktop.exe"
-    timeout /t 15 /nobreak
+    timeout /t 30 /nobreak
 )
 
 echo Start MLflow Docker Compose...
