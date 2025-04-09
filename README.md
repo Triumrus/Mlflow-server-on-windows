@@ -44,7 +44,8 @@ MYSQL_PASSWORD=mlflow
 MYSQL_ROOT_PASSWORD=mysql
 ```
 ## Mlflow и модели
-`Caddyfile`
+`Caddyfile`  
+По умолчанию пароли, хранятся в зашифрованном ввиде
 ```
 # mlflow
 admin looChaekie9Eitow
@@ -57,7 +58,7 @@ admin looChaekie9Eitow
 8003 admin Nai8shohj2ki6Cei
 ```
 
-# Настройка внешенго доступа (Интернет)
+# Публикация модели для внешенго доступа (Интернет)
 Здесь мы расскажем как настроить доступ к API модели из сети
 ## Настройка IP роутера
 В роутере за ноутом/компом закрепить ip (192.168.0.151)  
@@ -123,11 +124,12 @@ admin looChaekie9Eitow
 В файл `Caddyfile`  
 В конце добавляем   
 ```
+# Доступ из локальной сети без авторизации
 http://192.168.0.151:8004 {
 	reverse_proxy jupyter:8004
 }
 
-
+# /----------/
 # Доступ из сети без авторизации
 http://81.88.210.241:8004 {
 	reverse_proxy jupyter:8004
@@ -137,14 +139,15 @@ http://81.88.210.241:8004 {
 
 # # Доступ из сети С авторизаций.
 # Добавляет авторизацию
-# Пароль можно зашифровать в контейнере "caddy-container"
-# Команда : caddy hash-password a12345a
+# Пароль можно зашифровать в DOCKER в контейнере "caddy-container"
+# Команда : caddy hash-password
 http://81.88.210.241:8004 {
 	basic_auth {
 		admin $2a$14$QN7CZ4aQ7Hpy9EKTImI/eetKvZPk6T.pP/31EvQmKJ8/E/IoTfFbS
 	}
 	reverse_proxy jupyter:8004
 }
+# /----------/
 ```
 
 Так же этот порт в **Антивирус** и **Брандмауэр**
